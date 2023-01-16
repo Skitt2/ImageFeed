@@ -44,6 +44,7 @@
 		F9288709296BF8E800D3BDBF /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				F94667032952037D0045C940 /* Assets.xcassets */,
 				F928870C296BFC4100D3BDBF /* Fonts */,
 			);
 			path = Resources;
@@ -85,14 +86,13 @@
 		F94666F92952037C0045C940 /* ImageFeed */ = {
 			isa = PBXGroup;
 			children = (
+				F94667082952037D0045C940 /* Info.plist */,
 				F9288709296BF8E800D3BDBF /* Resources */,
 				F942C50A2969494400A9529A /* ImagesList */,
 				F94666FA2952037C0045C940 /* AppDelegate.swift */,
 				F94666FC2952037C0045C940 /* SceneDelegate.swift */,
 				F94667002952037C0045C940 /* Main.storyboard */,
-				F94667032952037D0045C940 /* Assets.xcassets */,
 				F94667052952037D0045C940 /* LaunchScreen.storyboard */,
-				F94667082952037D0045C940 /* Info.plist */,
 			);
 			path = ImageFeed;
 			sourceTree = "<group>";
@@ -336,6 +336,9 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.Skitt2.ImageFeed;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
@@ -366,6 +369,9 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.Skitt2.ImageFeed;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
