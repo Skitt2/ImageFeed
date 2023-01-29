@@ -80,7 +80,6 @@
                                             <outlet property="cellImage" destination="zwt-IW-sZA" id="wn0-YT-VIK"/>
                                             <outlet property="dataLabel" destination="tmH-5t-A0N" id="fwn-Fs-UsJ"/>
                                             <outlet property="likeButton" destination="Zri-bg-dsW" id="0D3-Ro-71h"/>
-                                            <segue destination="sIj-ey-xBZ" kind="show" id="pRV-Qr-78t"/>
                                         </connections>
                                     </tableViewCell>
                                 </prototypes>
@@ -101,6 +100,7 @@
                     <navigationItem key="navigationItem" id="rW5-m3-W7I"/>
                     <connections>
                         <outlet property="tableView" destination="HNY-GW-UQj" id="h1a-Ui-KaK"/>
+                        <segue destination="sIj-ey-xBZ" kind="show" identifier="ShowSingleImage" id="VoM-FX-NOh"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
@@ -168,55 +168,54 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="2oZ-An-u1B">
-                                <rect key="frame" x="16" y="80" width="382" height="350.5"/>
-                                <subviews>
-                                    <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="xXu-eu-8qA">
-                                        <rect key="frame" x="0.0" y="0.0" width="382" height="70"/>
-                                        <subviews>
-                                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="profilePhoto" translatesAutoresizingMaskIntoConstraints="NO" id="P50-ha-eRH">
-                                                <rect key="frame" x="0.0" y="0.0" width="70" height="70"/>
-                                            </imageView>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="right" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="jQR-Iv-Imp" userLabel="arrowButton">
-                                                <rect key="frame" x="70" y="0.0" width="312" height="70"/>
-                                                <state key="normal" title="Button"/>
-                                                <buttonConfiguration key="configuration" style="plain" image="arrowForwardIcon"/>
-                                            </button>
-                                        </subviews>
-                                    </stackView>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Екатерина Новикова" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ozv-w4-nTz" userLabel="profileName">
-                                        <rect key="frame" x="0.0" y="78" width="382" height="27.5"/>
-                                        <fontDescription key="fontDescription" name="SFPro-Regular" family="SF Pro" pointSize="23"/>
-                                        <color key="textColor" name="YP White"/>
-                                        <nil key="highlightedColor"/>
-                                    </label>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="@ekaterina_nov" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1OK-dA-MKZ" userLabel="profileID">
-                                        <rect key="frame" x="0.0" y="113.5" width="382" height="16"/>
-                                        <fontDescription key="fontDescription" name="SFPro-Regular" family="SF Pro" pointSize="13"/>
-                                        <color key="textColor" name="YP Gray"/>
-                                        <nil key="highlightedColor"/>
-                                    </label>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" text="Hello, world!" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qv5-lp-adF" userLabel="profileMessage">
-                                        <rect key="frame" x="0.0" y="137.5" width="382" height="213"/>
-                                        <fontDescription key="fontDescription" name="SFPro-Regular" family="SF Pro" pointSize="13"/>
-                                        <color key="textColor" name="YP White"/>
-                                        <nil key="highlightedColor"/>
-                                    </label>
-                                </subviews>
-                            </stackView>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="profilePhoto" translatesAutoresizingMaskIntoConstraints="NO" id="P50-ha-eRH">
+                                <rect key="frame" x="16" y="80" width="70" height="70"/>
+                            </imageView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Екатерина Новикова" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ozv-w4-nTz" userLabel="profileName">
+                                <rect key="frame" x="16" y="170" width="382" height="18"/>
+                                <fontDescription key="fontDescription" name="SFPro-Regular" family="SF Pro" pointSize="23"/>
+                                <color key="textColor" name="YP White"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="@ekaterina_nov" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1OK-dA-MKZ" userLabel="profileID">
+                                <rect key="frame" x="16" y="204" width="382" height="18"/>
+                                <fontDescription key="fontDescription" name="SFPro-Regular" family="SF Pro" pointSize="13"/>
+                                <color key="textColor" name="YP Gray"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" misplaced="YES" text="Hello, world!" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qv5-lp-adF" userLabel="profileMessage">
+                                <rect key="frame" x="16" y="230" width="382" height="18"/>
+                                <fontDescription key="fontDescription" name="SFPro-Regular" family="SF Pro" pointSize="13"/>
+                                <color key="textColor" name="YP White"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="trailing" contentVerticalAlignment="top" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="8gg-le-diF" userLabel="arrowButton">
+                                <rect key="frame" x="354" y="98" width="44" height="36"/>
+                                <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                <state key="normal" image="arrowForwardIcon"/>
+                                <connections>
+                                    <action selector="arrowButton:" destination="tku-tb-zaV" eventType="touchUpInside" id="2du-HE-2Ow"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="uX1-n1-Z35"/>
                         <color key="backgroundColor" name="YP Black"/>
                         <constraints>
-                            <constraint firstAttribute="trailing" secondItem="2oZ-An-u1B" secondAttribute="trailing" constant="16" id="9UY-Wc-LQU"/>
-                            <constraint firstItem="2oZ-An-u1B" firstAttribute="leading" secondItem="Sdn-M4-qmq" secondAttribute="leading" constant="16" id="LH7-sp-NEk"/>
-                            <constraint firstItem="uX1-n1-Z35" firstAttribute="centerY" secondItem="2oZ-An-u1B" secondAttribute="bottom" id="aYM-aP-6OK"/>
-                            <constraint firstItem="2oZ-An-u1B" firstAttribute="top" secondItem="uX1-n1-Z35" secondAttribute="top" constant="32" id="zV4-8v-Won"/>
+                            <constraint firstItem="ozv-w4-nTz" firstAttribute="top" secondItem="P50-ha-eRH" secondAttribute="bottom" constant="8" id="GQd-pR-o8n"/>
+                            <constraint firstItem="8gg-le-diF" firstAttribute="top" secondItem="uX1-n1-Z35" secondAttribute="top" constant="56" id="OQE-Wz-doX"/>
+                            <constraint firstItem="qv5-lp-adF" firstAttribute="leading" secondItem="Sdn-M4-qmq" secondAttribute="leading" constant="16" id="Zpd-GX-jeM"/>
+                            <constraint firstItem="qv5-lp-adF" firstAttribute="top" secondItem="1OK-dA-MKZ" secondAttribute="bottom" constant="8" id="akK-hV-IpZ"/>
+                            <constraint firstItem="1OK-dA-MKZ" firstAttribute="top" secondItem="ozv-w4-nTz" secondAttribute="bottom" constant="8" id="f84-Th-DGQ"/>
+                            <constraint firstItem="ozv-w4-nTz" firstAttribute="leading" secondItem="Sdn-M4-qmq" secondAttribute="leading" constant="16" id="oml-vJ-Tfz"/>
+                            <constraint firstItem="1OK-dA-MKZ" firstAttribute="leading" secondItem="Sdn-M4-qmq" secondAttribute="leading" constant="16" id="qUQ-4m-3WI"/>
+                            <constraint firstItem="P50-ha-eRH" firstAttribute="top" secondItem="uX1-n1-Z35" secondAttribute="top" constant="32" id="sgT-6P-QkZ"/>
+                            <constraint firstItem="uX1-n1-Z35" firstAttribute="trailing" secondItem="8gg-le-diF" secondAttribute="trailing" constant="16" id="wOV-f2-w1g"/>
+                            <constraint firstItem="P50-ha-eRH" firstAttribute="leading" secondItem="Sdn-M4-qmq" secondAttribute="leading" constant="16" id="xiv-Sb-CrM"/>
                         </constraints>
                     </view>
                     <tabBarItem key="tabBarItem" title="" image="tab_profile_active" id="QxX-wr-ili"/>
                     <connections>
-                        <outlet property="arrowButton" destination="jQR-Iv-Imp" id="bcV-Sk-Pjy"/>
+                        <outlet property="arrowButton" destination="8gg-le-diF" id="LjK-d6-OcJ"/>
                         <outlet property="profileID" destination="1OK-dA-MKZ" id="OJb-It-dAz"/>
                         <outlet property="profileMessage" destination="qv5-lp-adF" id="zwV-OU-3tf"/>
                         <outlet property="profileName" destination="ozv-w4-nTz" id="EP0-6X-m0H"/>
@@ -225,7 +224,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="fIC-cS-aYh" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-4" y="723"/>
+            <point key="canvasLocation" x="-4.3478260869565224" y="722.54464285714278"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="EP5-z4-2Zp">
