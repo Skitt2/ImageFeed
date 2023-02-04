@@ -67,7 +67,6 @@
 			children = (
 				F94666FE2952037C0045C940 /* ImagesListViewController.swift */,
 				F942C50B2969499E00A9529A /* ImagesListCell.swift */,
-				F96E37D62977EBA90066F876 /* SingleImageViewController.swift */,
 			);
 			path = ImagesList;
 			sourceTree = "<group>";
@@ -91,6 +90,7 @@
 		F94666F92952037C0045C940 /* ImageFeed */ = {
 			isa = PBXGroup;
 			children = (
+				F96FEE7F298B7C0000A9CAF0 /* SingleImageView */,
 				F96E37D52976BC800066F876 /* Profile */,
 				F94667082952037D0045C940 /* Info.plist */,
 				F9288709296BF8E800D3BDBF /* Resources */,
@@ -109,6 +109,14 @@
 				F9347528297679F00040B831 /* ProfileViewController.swift */,
 			);
 			path = Profile;
+			sourceTree = "<group>";
+		};
+		F96FEE7F298B7C0000A9CAF0 /* SingleImageView */ = {
+			isa = PBXGroup;
+			children = (
+				F96E37D62977EBA90066F876 /* SingleImageViewController.swift */,
+			);
+			path = SingleImageView;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
