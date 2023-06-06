@@ -1,6 +1,6 @@
 import UIKit
 
 final class AuthViewController: UIViewController {
-   //ShowWebView
+    private let ShowWebViewSegueIdentifier = "ShowWebView"
 }
 
