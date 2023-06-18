@@ -1,25 +1,17 @@
 import Foundation
+import SwiftKeychainWrapper
 
-class OAuth2TokenStorage {
-    private let userDefaults = UserDefaults.standard
-    private enum Keys: String {
-        case token
-    }
+final class OAuth2TokenStorage {
 
-     var token: String? {
+    static private let bearerTokenKey = "imageFeedBearerToken"
+
+    static var token: String? {
         get {
-            guard let data = userDefaults.data(forKey: Keys.token.rawValue),
-                let token = try? JSONDecoder().decode(String.self, from: data) else {
-                return nil
-            }
+            let token: String? = KeychainWrapper.standard.string(forKey: OAuth2TokenStorage.bearerTokenKey)
             return token
         }
         set {
-            guard let data = try? JSONEncoder().encode(newValue) else {
-                print("Невозможно сохранить токен")
-                return
-            }
-            userDefaults.set(data, forKey: Keys.token.rawValue)
+            KeychainWrapper.standard.set(newValue!, forKey: OAuth2TokenStorage.bearerTokenKey)
         }
     }
 }
