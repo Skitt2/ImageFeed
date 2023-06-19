@@ -13,10 +13,6 @@ final class OAuth2Service {
     func fetchAuthToken(code: String, handler: @escaping (Result<String, Error>) -> Void) {
         assert(Thread.isMainThread)
 
-        if lastCode == code { return }
-        currentTask?.cancel()
-        lastCode = code
-
         guard let request = makeRequest(code: code) else { return }
 
         let session = URLSession.shared
@@ -30,6 +26,11 @@ final class OAuth2Service {
                 handler(.failure(error))
             }
         }
+        
+        if lastCode == code { return }
+        currentTask?.cancel()
+        lastCode = code
+
         currentTask?.resume()
     }
 

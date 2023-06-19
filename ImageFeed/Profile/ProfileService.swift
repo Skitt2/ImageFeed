@@ -34,12 +34,7 @@ final class ProfileService {
             self.task = nil
             switch result {
             case .success(let profileResult):
-               let profile = Profile(
-                    username: profileResult.username,
-                    name: profileResult.first_name + " " + profileResult.last_name,
-                    loginName: "@" + profileResult.username,
-                    bio: profileResult.bio ?? ""
-                )
+                let profile = Profile(username: profileResult.username, name: "\(profileResult.first_name) \(profileResult.last_name ?? "")", loginName: "@\(profileResult.username)", bio: profileResult.bio ?? "")
                 self.currentProfile = profile
                 completion(.success(profile))
             case .failure(_):
@@ -62,6 +57,6 @@ final class ProfileService {
 struct ProfileResult: Decodable {
     let username: String
     let first_name: String
-    let last_name: String
+    let last_name: String?
     let bio: String?
 }

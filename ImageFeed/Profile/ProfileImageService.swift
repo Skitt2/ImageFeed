@@ -6,6 +6,8 @@ final class ProfileImageService {
     private var getProfileImageTask: URLSessionTask?
     private var lastProfileImageCode: String?
 
+    private init() { }
+    
     private (set) var avatarURL: URL?
     let didChangeNotification = Notification.Name(rawValue: "ProfileImageProviderDidChange")
 
