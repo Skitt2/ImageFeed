@@ -1,48 +1,60 @@
 import UIKit
 
 final class OAuth2Service {
-    
-    private enum NetworkError: Error {
-          case codeError
-      }
-    
-    func fetchOAuthToken(_ code: String, completion: @escaping (Result<String, Error>) -> Void) {
-        
-        var urlComponents = URLComponents(string: "https://unsplash.com/oauth/token")!
-                   urlComponents.queryItems = [
-                      URLQueryItem(name: "client_id", value: AccessKey),
-                      URLQueryItem(name: "client_secret", value: SecretKey),
-                      URLQueryItem(name: "redirect_uri", value: RedirectURI),
-                      URLQueryItem(name: "code", value: code),
-                      URLQueryItem(name: "grant_type", value: "authorization_code")
-                    ]
-                   let url = urlComponents.url!
 
-                   var request = URLRequest(url: url)
-                   request.httpMethod = "POST"
+    enum NetworkError: Error {
+        case codeError
+        case unableToDecodeStringFromData
+    }
+
+    private var currentTask: URLSessionTask?
+    private var lastCode: String?
+
+    func fetchAuthToken(code: String, handler: @escaping (Result<String, Error>) -> Void) {
+        assert(Thread.isMainThread)
+
+        guard let request = makeRequest(code: code) else { return }
+
+        let session = URLSession.shared
+        currentTask = session.objectTask(for: request) { [weak self] (result: Result<OAuthTokenResponseBody, Error>) in
+            guard let self else { return }
+            self.currentTask = nil
+            switch result {
+            case .success(let oAuthToken):
+                handler(.success(oAuthToken.access_token))
+            case .failure(let error):
+                handler(.failure(error))
+            }
+        }
         
-        let task = URLSession.shared.dataTask(with: request) { data, response, error in
-            
-            if let error = error {
-                completion(.failure(error))
-                return
-            }
-            
-            if let response = response as? HTTPURLResponse,
-               response.statusCode < 200 && response.statusCode >= 300 {
-                completion(.failure(NetworkError.codeError))
-            }
-            
-            guard let data = data else { return }
-            
-            let apiResponse = try? JSONDecoder().decode(OAuthTokenResponseBody.self, from: data)
-                      guard let apiResponse = apiResponse else {
-                          return
-            }
-            DispatchQueue.main.async {
-                completion(.success(apiResponse.accessToken))
-                       }
-                   }
-                   task.resume()
+        if lastCode == code { return }
+        currentTask?.cancel()
+        lastCode = code
+
+        currentTask?.resume()
+    }
+
+    private func makeRequest(code: String) -> URLRequest? {
+        let url = URL(string: "https://unsplash.com/oauth/token")!
+        var request = URLRequest(url: url)
+        let params: [String: Any] = [
+            "client_id": Constants.accessKey,
+            "client_secret": Constants.secretKey,
+            "redirect_uri": Constants.redirectURI,
+            "code": code,
+            "grant_type": "authorization_code"
+        ]
+
+        request.httpMethod = "POST"
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.addValue("application/json", forHTTPHeaderField: "Accept")
+
+        do {
+            request.httpBody = try JSONSerialization.data(withJSONObject: params, options: .prettyPrinted)
+        } catch let error {
+            print(error.localizedDescription)
+            return nil
+        }
+        return request
     }
 }
