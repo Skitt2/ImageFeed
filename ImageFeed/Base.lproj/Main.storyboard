@@ -61,7 +61,10 @@
                                                             <fragment content=" "/>
                                                         </attributedString>
                                                     </state>
-                                                    <buttonConfiguration key="configuration" style="plain" image="Active" title=" "/>
+                                                    <buttonConfiguration key="configuration" style="plain" image="noActiveLike" title=" "/>
+                                                    <connections>
+                                                        <action selector="likeButtonClicked:" destination="rVW-O3-xt0" eventType="touchUpInside" id="B6I-Ny-eTh"/>
+                                                    </connections>
                                                 </button>
                                             </subviews>
                                             <color key="backgroundColor" name="YP Black"/>
@@ -80,7 +83,7 @@
                                         <connections>
                                             <outlet property="cellImage" destination="zwt-IW-sZA" id="wn0-YT-VIK"/>
                                             <outlet property="dataLabel" destination="tmH-5t-A0N" id="fwn-Fs-UsJ"/>
-                                            <outlet property="likeButton" destination="Zri-bg-dsW" id="0D3-Ro-71h"/>
+                                            <outlet property="likeButton" destination="Zri-bg-dsW" id="FXY-wg-aj2"/>
                                         </connections>
                                     </tableViewCell>
                                 </prototypes>
@@ -340,6 +343,7 @@
         <image name="SharingShare_button" width="50.333332061767578" height="50"/>
         <image name="chevronBackward" width="9" height="16"/>
         <image name="nav_back_button" width="9" height="16"/>
+        <image name="noActiveLike" width="42" height="42"/>
         <namedColor name="YP Black">
             <color red="0.10199999809265137" green="0.10599999874830246" blue="0.13300000131130219" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
