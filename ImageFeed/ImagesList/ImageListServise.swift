@@ -1,4 +1,4 @@
-import Foundation
+import UIKit
 
 final class ImagesListService {
     
@@ -17,7 +17,7 @@ final class ImagesListService {
             guard let self = self else { return }
             UIBlockingProgressHUD.show()
             guard let url = URL(string: "https://api.unsplash.com/photos?page=\(self.currentPage)&per_page=\(self.itemsPerPage)"),
-                  let token = OAuth2TokenStorage.token else {
+                  let token = OAuth2TokenStorage().token else {
                 self.isFetching = false
                 return
             }
@@ -61,7 +61,7 @@ final class ImagesListService {
     }
     
     func changeLike(photoId: String, isLike: Bool, _ completion: @escaping (Result<Void, Error>) -> Void) {
-        guard let token = OAuth2TokenStorage.token else { return }
+        guard let token = OAuth2TokenStorage().token else { return }
         
         let urlString = "https://api.unsplash.com/photos/\(photoId)/like"
         guard let url = URL(string: urlString) else { return }

@@ -150,6 +150,7 @@
 		F94666F92952037C0045C940 /* ImageFeed */ = {
 			isa = PBXGroup;
 			children = (
+				F94667002952037C0045C940 /* Main.storyboard */,
 				F94667082952037D0045C940 /* Info.plist */,
 				F94666FA2952037C0045C940 /* AppDelegate.swift */,
 				F91E78022A2C89E400BAB4F3 /* Constants.swift */,
@@ -159,7 +160,6 @@
 				F91E78062A2CA08600BAB4F3 /* Auth */,
 				F942C50A2969494400A9529A /* ImagesList */,
 				F94667052952037D0045C940 /* LaunchScreen.storyboard */,
-				F94667002952037C0045C940 /* Main.storyboard */,
 				F96E37D52976BC800066F876 /* Profile */,
 				F9288709296BF8E800D3BDBF /* Resources */,
 				F91804B12A383F6C00D1DE77 /* ServiceAccessLayer */,

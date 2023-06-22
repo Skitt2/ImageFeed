@@ -1,62 +1,78 @@
 import UIKit
 
 final class ProfileService {
-
     static let shared = ProfileService()
-    private(set) var currentProfile: Profile?
-    private var lastProfileCode: String?
-    private var task: URLSessionTask?
-
-    struct Profile {
-        let username: String
-        let name: String
-        let loginName: String
-        let bio: String
-    }
-
-    private enum GetProfileError: Error {
-        case profileCodeError
-        case unableToDecodeStringFromProfileData
-    }
-
-
-    func fetchProfile(_ token: String, completion: @escaping (Result<Profile, Error>) -> Void) {
-        assert(Thread.isMainThread)
-
-        if lastProfileCode == token { return }
-        task?.cancel()
-        lastProfileCode = token
-
-        let request = makeProfileRequest(token)
-        let session = URLSession.shared
-        task = session.objectTask(for: request) { [weak self] (result: Result<ProfileResult, Error>) in
-            guard let self else { return }
-            self.task = nil
+    static let didChangeNotification = Notification.Name(rawValue: "ProfileProviderDidChange")
+    
+    private var profile: Profile?
+        
+    private var lastToken: String?
+    private let lock = NSLock()
+    private let semaphore = DispatchSemaphore(value: 0)
+    
+    func fetchProfile(_ token: String) {
+        self.fetchProfile(token) { result in
             switch result {
-            case .success(let profileResult):
-                let profile = Profile(username: profileResult.username, name: "\(profileResult.first_name) \(profileResult.last_name ?? "")", loginName: "@\(profileResult.username)", bio: profileResult.bio ?? "")
-                self.currentProfile = profile
-                completion(.success(profile))
-            case .failure(_):
-                completion(.failure(GetProfileError.unableToDecodeStringFromProfileData))
-                self.lastProfileCode = nil
-                return
+            case .success(let profile):
+                self.profile = profile
+                self.lock.unlock()
+                self.semaphore.signal()
+            case .failure(_ ):
+                self.lastToken = nil
+                self.lock.unlock()
+                self.semaphore.signal()
             }
         }
-        task?.resume()
     }
-
-    private func makeProfileRequest(_ token: String) -> URLRequest {
-        var request = URLRequest(url: Constants.defaultBaseURL.appendingPathComponent("me"))
+    
+    func getProfile() -> Profile? {
+        if self.profile == nil {
+            self.semaphore.wait()
+        }
+        return self.profile
+    }
+    
+    func fetchProfile(_ token: String, completion: @escaping (Result<Profile, Error>) -> Void) {
+        assert(Thread.isMainThread)
+        if lastToken == token { return }
+        lock.lock()
+        lastToken = token
+        
+        let url = URL(string: "https://api.unsplash.com/me")!
+        
+        var request = URLRequest(url: url)
         request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
-        request.httpMethod = "GET"
-        return request
+        
+        let task = URLSession.shared.objectTask(for: request) { (result: Result<ProfileResult, Error>) in
+            switch result {
+            case .success(let profileResult):
+                let profile = Profile(username: profileResult.username, name: "\(profileResult.firstName) \(profileResult.lastName ?? "")", loginName: "@\(profileResult.username)", bio: profileResult.bio ?? "")
+                completion(.success(profile))
+            case .failure(let error):
+                completion(.failure(error))
+            }
+        }
+        task.resume()
     }
 }
 
-struct ProfileResult: Decodable {
+struct ProfileResult: Codable {
     let username: String
-    let first_name: String
-    let last_name: String?
+    let firstName: String
+    let lastName: String?
     let bio: String?
+    
+    enum CodingKeys: String, CodingKey {
+        case username
+        case firstName = "first_name"
+        case lastName = "last_name"
+        case bio
+    }
+}
+
+struct Profile {
+    let username: String
+    let name: String
+    let loginName: String
+    let bio: String
 }

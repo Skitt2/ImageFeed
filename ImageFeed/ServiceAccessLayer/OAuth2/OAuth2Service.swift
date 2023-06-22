@@ -1,60 +1,49 @@
-import UIKit
+import Foundation
 
-final class OAuth2Service {
-
-    enum NetworkError: Error {
-        case codeError
-        case unableToDecodeStringFromData
-    }
-
-    private var currentTask: URLSessionTask?
+class OAuth2Service {
+    
     private var lastCode: String?
-
-    func fetchAuthToken(code: String, handler: @escaping (Result<String, Error>) -> Void) {
+    private var currentTask: URLSessionTask?
+    
+    func fetchAuthToken(
+        _ code: String,
+        completion: @escaping (Result<String, Error>) -> Void
+    ) {
         assert(Thread.isMainThread)
-
-        guard let request = makeRequest(code: code) else { return }
-
-        let session = URLSession.shared
-        currentTask = session.objectTask(for: request) { [weak self] (result: Result<OAuthTokenResponseBody, Error>) in
-            guard let self else { return }
-            self.currentTask = nil
-            switch result {
-            case .success(let oAuthToken):
-                handler(.success(oAuthToken.access_token))
-            case .failure(let error):
-                handler(.failure(error))
-            }
-        }
-        
         if lastCode == code { return }
         currentTask?.cancel()
         lastCode = code
-
-        currentTask?.resume()
-    }
-
-    private func makeRequest(code: String) -> URLRequest? {
-        let url = URL(string: "https://unsplash.com/oauth/token")!
-        var request = URLRequest(url: url)
-        let params: [String: Any] = [
-            "client_id": Constants.accessKey,
-            "client_secret": Constants.secretKey,
-            "redirect_uri": Constants.redirectURI,
-            "code": code,
-            "grant_type": "authorization_code"
-        ]
-
-        request.httpMethod = "POST"
-        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.addValue("application/json", forHTTPHeaderField: "Accept")
-
-        do {
-            request.httpBody = try JSONSerialization.data(withJSONObject: params, options: .prettyPrinted)
-        } catch let error {
-            print(error.localizedDescription)
-            return nil
+        
+        let request = makeRequest(code)
+        let task = URLSession.shared.objectTask(for: request) { (result: Result<OAuthTokenResponseBody, Error>) in
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let response):
+                    completion(.success(response.accessToken))
+                case .failure(let error):
+                    completion(.failure(error))
+                    self.lastCode = nil
+                }
+                self.currentTask = nil
+            }
         }
+        currentTask = task
+        task.resume()
+    }
+    
+    private func makeRequest(_ code: String) -> URLRequest {
+        var urlComponents = URLComponents(string: "https://unsplash.com/oauth/token")!
+        urlComponents.queryItems = [
+            URLQueryItem(name: "client_id", value: Constants.accessKey),
+            URLQueryItem(name: "client_secret", value: Constants.secretKey),
+            URLQueryItem(name: "redirect_uri", value: Constants.redirectURI),
+            URLQueryItem(name: "code", value: code),
+            URLQueryItem(name: "grant_type", value: "authorization_code")
+        ]
+        let url = urlComponents.url!
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        
         return request
     }
 }

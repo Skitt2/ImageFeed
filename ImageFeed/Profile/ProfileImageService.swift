@@ -1,67 +1,73 @@
 import UIKit
+import Kingfisher
 
 final class ProfileImageService {
     
+    static let didChangeNotification = Notification.Name(rawValue: "ProfileImageProviderDidChange")
     static let shared = ProfileImageService()
-    private var getProfileImageTask: URLSessionTask?
-    private var lastProfileImageCode: String?
-
-    private init() { }
     
-    private (set) var avatarURL: URL?
-    let didChangeNotification = Notification.Name(rawValue: "ProfileImageProviderDidChange")
-
-    private enum GetProfileImageError: Error {
-        case profileImageCodeError
-        case unableToDecodeStringFromProfileImageData
-        case noURL
-    }
-
-    struct UserResult: Decodable {
-        let profileImage: [String: String]
-
-        enum CodingKeys: String, CodingKey {
-            case profileImage = "profile_image"
-        }
-    }
-
-    func fetchProfileImageURL(token: String, username: String, _ completion: @escaping (Result<URL, Error>) -> Void) {
-        assert(Thread.isMainThread)
-
-        let request = makeRequest(username, token)
-
-        let session = URLSession.shared
-
-        getProfileImageTask = session.objectTask(for: request) { [weak self] (result: Result<UserResult, Error>) in
-            guard let self else { return }
-            self.getProfileImageTask = nil
-            switch result {
-            case .success(let userResult):
-                guard let profileImageURL = userResult.profileImage["small"],
-                      let avatarURL = URL(string: profileImageURL) else {
-                    completion(.failure(GetProfileImageError.noURL))
-                    return
+    private (set) var avatar: UIImageView = UIImageView()
+    
+    func fetchProfileImageURL(username: String, _ completion: @escaping (Result<String, Error>) -> Void) {
+        let url = URL(string: "https://api.unsplash.com/users/\(username)?client_id=\(Constants.accessKey)")!
+        
+        var request = URLRequest(url: url)
+        request.setValue("Bearer \(OAuth2TokenStorage().token ?? "")", forHTTPHeaderField: "Authorization")
+        let task = URLSession.shared.objectTask(for: request) { (result: Result<UserResult, Error>) in
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let userResult):
+                    let avatarURLPath = userResult.profileImage.large.absoluteString
+                    let avatarURL = URL(string: avatarURLPath)!
+                    self.avatar.kf.indicatorType = .activity
+                    self.avatar.kf.setImage(with: avatarURL,
+                                            placeholder: UIImage(named: "placeholder"),
+                                            options: [.processor(RoundCornerImageProcessor(radius: Radius.heightFraction(0.5))),
+                                                      .scaleFactor(UIScreen.main.scale),
+                                                      .cacheOriginalImage]) { result in
+                                                          switch result {
+                                                          case .success(_):
+                                                              NotificationCenter.default
+                                                                  .post(
+                                                                    name: ProfileImageService.didChangeNotification,
+                                                                    object: self,
+                                                                    userInfo: ["URL": userResult.profileImage.large.absoluteString])
+                                                          case .failure(let error):
+                                                              print(error)
+                                                          }
+                                                      }
+                    completion(.success(avatarURLPath))
+                case .failure(let error):
+                    completion(.failure(error))
                 }
-                self.avatarURL = avatarURL
-                NotificationCenter.default.post(
-                    name: self.didChangeNotification,
-                    object: nil)
-                completion(.success(avatarURL))
-            case .failure(_):
-                completion(.failure(GetProfileImageError.unableToDecodeStringFromProfileImageData))
-                self.lastProfileImageCode = nil
-                return
             }
         }
-        getProfileImageTask?.resume()
+        task.resume()
     }
+}
 
-    private func makeRequest(_ username: String,_ token: String) -> URLRequest {
 
-        var request = URLRequest(url: Constants.defaultBaseURL.appendingPathComponent("users/\(username)"))
-        request.setValue("Bearer \(String(describing: token))", forHTTPHeaderField: "Authorization")
-        request.httpMethod = "GET"
-        return request
+struct UserResult: Codable {
+    let profileImage: ProfileImage
+    
+    struct ProfileImage: Codable {
+        let small: URL
+        let medium: URL
+        let large: URL
+        
+        enum CodingKeys: String, CodingKey {
+            case small
+            case medium
+            case large
+        }
     }
+    
+    enum CodingKeys: String, CodingKey {
+        case profileImage = "profile_image"
+    }
+}
 
+enum ProfileImageError: Error {
+    case invalidURL
+    case noData
 }
